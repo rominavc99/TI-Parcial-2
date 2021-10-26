@@ -1,0 +1,129 @@
+!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charste="UTF-8">
+    <meta http-equiv="X-UAComaptible" content= "IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCV Tratamiento de la Imagen</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+
+</head>
+
+    <body>
+        <nav class = "navbar navbar-dark fixed-top flex-md-nowrap p-0 shadow">
+                <a class="navbar-brand col-sm-3 col-md 2 mr-0" href="#">OpenCV con Javascript</a>
+                <h1 class= "col-md-10">Ejercicio 2 - Carga Básica de WebCam</h1>
+        </nav>
+
+        <div class= "container-fluid">
+
+        <div class="row">
+                    <nav class="col-md-2 d-done d-md-block bg-lighet sidebar">
+                        <div class="sidebar-sticky">
+                            <ul id="menu" class="nav flex-column">
+                                <li class = "nav-item"><a class="nav-link" href= "index.html">Ejemplo 1. Carga Básica de Imagen </a></li>
+                                <li class = "nav-item"><a class="nav-link" href= "index2.html">Ejemplo 2. Carga Básica de WebCam </a></li>
+                                <li class = "nav-item"><a class="nav-link" href= "index3.html">Ejemplo 3. Proceso Básico de Imagen </a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                
+
+                <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-40">
+
+                <div class="row">
+                    <div class="col">
+                        <div id="status" class="alert alert-primary" role="alert"> <img src="img/ajax-loader.gif" /> Cargando OpenCV... </div>
+                    </div>
+                </div>
+
+                <a href="#" class="btn btn-primary" style= "display: none;" id="cv_start">Aplicar</a>
+
+                <div class="row">
+                    <div class="col">
+                        <video id="VideoInput" width="320" height="240"></video>
+                    </div>
+
+                    <div class="col">
+                        <canvas id="CanvasOutput" class="small"  height="300"></canvas>
+                    </div>
+
+                </div>
+
+
+                </main>
+        </div>
+        
+
+        </div>
+
+        <!--Scriptas para Bootstrap-->
+        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/popper.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <!--OpenCv-->
+        <script async="" src="js/opencv.js" type="text/Javascript" onload="onOpenCvReady();" onload="onOpenCvReady();"></script>
+
+        <script type="text/javascript">
+
+            let video= document.getElementById("VideoInput");
+            let src;
+            let dst;
+            let cap;
+
+            const FPS = 30;
+
+            function processVideo(){
+                try {
+                    let inicio = Date.now();
+
+                    cap.read(src);
+                    cv.cvtColor(src, dst, cv.COLOR_RGB2GRAY);
+                    cv.imshow('CanvasOutput', dst);
+
+                    let delay = 1000/FPS - (Date.now() - inicio);
+                    setTimeout(processVideo, delay);
+                
+                } catch (err){
+                    console.log(err);
+                }
+
+            }
+
+            function start_cv(){
+                src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+                dst = new cv.Mat(video.height, video.width, cv.CV_8UC1);
+                cap = new cv.VideoCapture(video);
+                processVideo();
+            }
+
+            navigator.mediaDevices.getUserMedia({video: true, audio: false})
+                .then(function(stream){
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function(err){
+                    console.log("Ocurrio un error" + err);
+                })
+           
+            
+
+            function onOpenCvReady(){
+                document.getElementById('status').innerHTML = '<b>OpenCV cargó correctamente';
+                $("#cv_start").show();
+                $("#cv_start").click(start_cv);
+            }
+
+            function onOpenCVErorr(){
+                let element =document.getElementById('status');
+                element.getAttribute('class', 'er');
+                element.innerHTML = 'Falló la carga de OpenCV.js';
+            }
+
+        </script>
+    </body>
+</html>
